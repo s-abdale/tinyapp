@@ -39,7 +39,13 @@ app.post("/urls", (req, res) => {
   console.log(req.body); // Log the POST request body to the console
   const randomStr = generateRandomString();
   urlDatabase[randomStr] = req.body.longURL; // Pushes new tiny URL to urlDatabase
-  res.redirect(`/urls/${randomStr}`); // Redirects to newly made hyperlinked page
+  res.redirect(`/urls/${randomStr}`); // Redirects to tinyURL page
+});
+
+app.post("/urls/:shortURL/delete", (req, res) => {
+  console.log(req.body); // Log the POST request body to the console
+  delete urlDatabase[req.params.shortURL], req.params.shortURL; // Deletes URL entry
+  res.redirect("/urls"); // Redirects to main urls_index page
 });
 
 app.get("/urls/new", (req, res) => {
