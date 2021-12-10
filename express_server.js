@@ -87,6 +87,28 @@ app.post("/urls/:shortURL", (req, res) => {
   res.redirect(`/urls/${req.params.shortURL}`);
 });
 
+
+
+
+// Sends to registration page
+app.get("/register", (req, res) => {
+  const templateVars = { urls: urlDatabase, username: req.cookies["username"]};
+  res.render("urls_register", templateVars);
+
+  
+  // res.redirect("/register")
+});
+
+// Register
+app.post("/register", (req, res) => {
+
+  
+  res.redirect("/urls"); // Redirects to main /urls page
+});
+
+
+
+
 // login ✅
 app.get("/login", (req, res) => {
   const templateVars = {username: req.cookies["username"]};
