@@ -15,21 +15,16 @@ const urlDatabase = { // placeholder URLs
   "9sm5xK": "http://www.google.com"
 };
 
-// const users = [ // placeholder login
-//   {username: 'safia', password: 'passw0rd'}
-// ];
-
 function generateRandomString() { 
   return Math.random().toString(36).slice(2, 8);
 }
 
 
 
-// ROUTES
 
-app.get("/", (req, res) => {
-  res.send("Hello!");
-});
+
+
+// ROUTES
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
@@ -37,6 +32,10 @@ app.listen(PORT, () => {
 
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
+});
+
+app.get("/", (req, res) => {
+  res.send("Hello!");
 });
 
 app.get("/hello", (req, res) => {
@@ -59,12 +58,13 @@ app.post("/urls", (req, res) => {
 
 // Lists short URL on homepage ✅
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+  const templateVars = {username: req.cookies["username"]};
+  res.render("urls_new", templateVars);
 });
 
 // Assign shortURL to longURL ✅
 app.get("/urls/:shortURL", (req, res) => {
-  const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] };
+  const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], username: req.cookies["username"]};
   res.render("urls_show", templateVars);
 });
 
@@ -84,26 +84,27 @@ app.get("/u/:shortURL", (req, res) => {
 // Edit URL ✅
 app.post("/urls/:shortURL", (req, res) => {
   urlDatabase[req.params.shortURL] = req.body.newLongURL;
-  // res.redirect(`/urls/${req.params.shortURL}`);
   res.redirect(`/urls/${req.params.shortURL}`);
 });
 
 // login ✅
 app.get("/login", (req, res) => {
+  const templateVars = {username: req.cookies["username"]};
+  res.render("urls_show", templateVars); // Passes "username" to /login route
   res.redirect("/urls")
 });
 
 // Collects cookie on login ✅
 app.post("/login", (req, res) => {
   console.log(req.body); // Log the POST request body to the console
-
   res.cookie("username", req.body.username); // value = name of form from _header.ejs
-
   res.redirect("/urls"); // Redirects to main /urls page
 });
 
 // logout ✅
 app.get("/logout", (req, res) => {
+  const templateVars = {username: req.cookies["username"]};
+  res.render("urls_show", templateVars); // Passes "username" to /logout route
   res.redirect("/urls")
 });
 
