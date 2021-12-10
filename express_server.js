@@ -122,10 +122,14 @@ app.get("/register", (req, res) => {
 
 // Register ✅
 app.post("/register", (req, res) => {
+
+  // visualizing:
   // console.log("OG users: ");
   // console.log(users);
   // console.log("Pushing ... ");
   // console.log(req.body);
+
+  // unnecessary:
   // const templateVars = { urls: urlDatabase, username: req.cookies["username"]};
   let randomUserID = generateRandomString(); // generate randomUserID  
   users[randomUserID] = {
@@ -133,8 +137,12 @@ app.post("/register", (req, res) => {
     email: req.body.email,
     password: req.body.password
   } // pushes new object to users object
+
+  // visualizing:
   // console.log("New users: ");
   // console.log(users);
+
+  res.cookie("username", randomUserID) // updates username cookie to new randomUserID, writes "logged in as ..." to header, great success
   res.redirect("/urls"); // Redirects to main /urls page
 });
 
