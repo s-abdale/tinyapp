@@ -19,6 +19,18 @@ function generateRandomString() {
   return Math.random().toString(36).slice(2, 8);
 }
 
+const users = { 
+  "userRandomID": {
+    id: "userRandomID", 
+    email: "user@example.com", 
+    password: "purple-monkey-dinosaur"
+  },
+ "user2RandomID": {
+    id: "user2RandomID", 
+    email: "user2@example.com", 
+    password: "dishwasher-funk"
+  }
+};
 
 
 
@@ -90,19 +102,39 @@ app.post("/urls/:shortURL", (req, res) => {
 
 
 
-// Sends to registration page
+// Registration page ✅
 app.get("/register", (req, res) => {
+
+  // let randomUserID = generateRandomString(); // generate randomUserID  
+
+  // users[randomUserID] = {
+  //   id: randomUserID,
+  //   email: req.body.email,
+  //   password: req.body.password
+  // }
+
   const templateVars = { urls: urlDatabase, username: req.cookies["username"]};
   res.render("urls_register", templateVars);
 
-  
-  // res.redirect("/register")
+
+  // res.render("urls_register"); // can't do this bc we need username for _header to run
 });
 
-// Register
+// Register ✅
 app.post("/register", (req, res) => {
-
-  
+  // console.log("OG users: ");
+  // console.log(users);
+  // console.log("Pushing ... ");
+  // console.log(req.body);
+  // const templateVars = { urls: urlDatabase, username: req.cookies["username"]};
+  let randomUserID = generateRandomString(); // generate randomUserID  
+  users[randomUserID] = {
+    id: randomUserID,
+    email: req.body.email,
+    password: req.body.password
+  } // pushes new object to users object
+  // console.log("New users: ");
+  // console.log(users);
   res.redirect("/urls"); // Redirects to main /urls page
 });
 
