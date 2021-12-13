@@ -51,7 +51,6 @@ const users = {
 const getEmail = function(obj, str) {
   for (const id in obj) {
     if (obj[id].email === str) {
-      // console.log(true);
       return true; // BAD CASE - if email is in obj, return true
     }
   }
@@ -61,7 +60,6 @@ const getEmail = function(obj, str) {
 const checkUserPresence = function(obj, email, pwd) {
   for (const id in obj) {
     if ((obj[id].email === email) && (obj[id].password === pwd)) {
-      // console.log(true);
       return true; // GOOD CASE - email & password pair exists, so user exists
     }
   }
@@ -70,7 +68,7 @@ const checkUserPresence = function(obj, email, pwd) {
 
 
 /*               ROUTES                   */
-/*---Home pages---*/
+/*---Home pages & config.---*/
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
@@ -79,8 +77,10 @@ app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
-app.get("/", (req, res) => {
-  res.send("Hello!");
+// Show /landing welcome page
+app.get("/landing", (req, res) => {
+  const templateVars = { urls: urlDatabase, user: req.cookies["user"], userID: req.cookies["user_id"]};
+  res.render("urls_landing", templateVars);
 });
 
 app.get("/hello", (req, res) => {
@@ -90,6 +90,10 @@ app.get("/hello", (req, res) => {
 // Show /URLs homepage
 app.get("/urls", (req, res) => {
   const templateVars = { urls: urlDatabase, user: req.cookies["user"], userID: req.cookies["user_id"]};
+  if (!req.cookies["user"]) {
+    res.status(400).send(`Error: 400. Please log in or register`);
+    res.redirect("/landing")
+  }
   res.render("urls_index", templateVars);
 });
 
@@ -166,14 +170,16 @@ app.post("/login", (req, res) => {
 app.get("/logout", (req, res) => {
   const templateVars = {user: req.cookies["user"], userID: req.cookies["user_id"]};
   res.render("urls_show", templateVars); // Passes "user" to /logout route
-  res.redirect("/urls");
+  // res.redirect("/urls");
+  res.redirect("/landing");
 });
 
 // Remove cookie on logout
 app.post("/logout", (req, res) => {
   // console.log(req.body); // Log the POST request body to the console
   res.clearCookie("user"); // Removes the cookie + username
-  res.redirect("/urls"); // Redirects to main /urls page
+  // res.redirect("/urls"); // Redirects to main /urls page
+  res.redirect("/landing");
 });
 
 
@@ -193,7 +199,6 @@ app.get("/urls/new", (req, res) => {
 
 // Create new URL & show new URL page
 app.post("/urls", (req, res) => {
-  // console.log(req.body); // Log the POST request body to the console
   const randomStr = generateRandomString();
 
   urlDatabase[randomStr] = {longURL: req.body.longURL, userID: req.cookies["user_id"].id}; // Pushes tinyURL object with longURL & userID to urlDatabase
@@ -215,8 +220,6 @@ app.get("/u/:shortURL", (req, res) => {
 
 // Edit URL from /URLs homepage
 app.post("/urls/:shortURL", (req, res) => {
-
-  // urlDatabase[req.params.shortURL] = req.body.newLongURL;
   urlDatabase[req.params.shortURL].longURL = req.body.newLongURL;
 
   res.redirect(`/urls/${req.params.shortURL}`);
