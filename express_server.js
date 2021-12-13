@@ -16,20 +16,31 @@ const urlDatabase = { // placeholder URLs
   "9sm5xK": "http://www.google.com"
 };
 
-function generateRandomString() { 
+// Generate random string for user ID
+function generateRandomString() {
   return Math.random().toString(36).slice(2, 8);
 }
 
-const users = { 
+const users = {
   "userRandomID": {
-    id: "userRandomID", 
-    email: "user@example.com", 
+    id: "userRandomID",
+    email: "user@example.com",
     password: "purple-monkey-dinosaur"
   },
- "user2RandomID": {
-    id: "user2RandomID", 
-    email: "user2@example.com", 
+  "user2RandomID": {
+    id: "user2RandomID",
+    email: "user2@example.com",
     password: "dishwasher-funk"
+  }
+};
+
+// Check if email is already in Users object
+const getEmail = function(obj, str) {
+  for (const id in obj) {
+    if (obj[id].email === str) {
+      // console.log(true);
+      return true; // BAD CASE - if email is in obj, return true
+    }
   }
 };
 
@@ -108,53 +119,39 @@ app.post("/urls/:shortURL", (req, res) => {
 app.get("/register", (req, res) => {
   const templateVars = { urls: urlDatabase, /*username: req.cookies["username"]*/ user: req.cookies["user"], userID: req.cookies["user_id"],};
   res.render("urls_register", templateVars);
-
-  // res.render("urls_register"); // can't do this bc we need username for _header to run
 });
-
-// 💡💡💡💡💡💡💡💡💡✅✅✅✅✅✅✅✅✅💡💡💡💡💡💡💡💡💡💡💡
-// 💡💡💡💡💡💡💡💡💡💡WORKING HERE💡💡💡💡💡💡💡💡💡💡💡💡
-// 💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡
 
 // Register and log in user through a form
 app.post("/register", (req, res) => {
+  // Variables needed for error evaluations:
+  const randomUserID = generateRandomString();
+  const userEmail = req.body.email; // just the email
 
-  // // visualizing:
-  // console.log("OG users object: ");
-  // console.log(users);
-  // console.log("Adding new user ... ");
-  // console.log(req.body); // just the user input on registration page
+  // Error evaluations:
+  // If email is already in use ...
+  let evaluation = (getEmail(users, userEmail));
+  if (evaluation === true) {
+    console.log(`Error: 400. Email is already in use`);
+    res.status(400).send(`Error: 400. Email is already in use`);
+  }
+  // If email OR pwd are empty strings ...
+  if ((!req.body.email) || (!req.body.password)) {
+    console.log(`Error: 400. Invalid email or password`);
+    res.status(400).send(`Error: 400. Invalid email or password`);
+  }
 
-  // Generate randomUserID
-  const randomUserID = generateRandomString(); 
+  // Happy condition - no errors:
   // Push new user object to users object
   users[randomUserID] = {
     id: randomUserID,
     email: req.body.email,
     password: req.body.password
-  }
-  // Variables
-  const userObj = users[randomUserID]; // the entire new user object
-  const userID = userObj["id"]; // just the ID
-  const userEmail = req.body.email; // just the email
+  };
+  // Variables for cookies:
+  const userObj = users[randomUserID]; // The entire new user object
 
-  // // visualizing:
-  // console.log("New user object: ");
-  // console.log(userObj);
-  // console.log(`Email: ${userEmail}`);
-  // console.log(`User ID: ${userID}`);
-  console.log(users[userID]) // use this for vars
-
-  // Cookies
-  res.cookie("user_id", userID); // set a user_id cookie containing the user's newly generated ID
-
-  res.cookie("user", userObj); // should pass the whole new obj as a cookie
-  // user: req.cookies["user"], userID: req.cookies["user_id"],
-  
-  // res.cookie("username", randomUserID) // updates username cookie to new randomUserID, writes "logged in as (ID) to header
-
-  // res.cookie("username", userEmail) // updates username cookie to new email, writes "logged in as (email)" to header, success!
-
+  // Cookies:
+  res.cookie("user", userObj); // Makes new user object a cookie
   res.redirect("/urls"); // Redirects to main /urls page
 });
 
@@ -162,7 +159,7 @@ app.post("/register", (req, res) => {
 app.get("/login", (req, res) => {
   const templateVars = {/*username: req.cookies["username"]*/ user: req.cookies["user"], userID: req.cookies["user_id"],};
   res.render("urls_show", templateVars); // Passes "username" to /login route
-  res.redirect("/urls")
+  res.redirect("/urls");
 });
 
 // Collect cookie on login
@@ -176,7 +173,7 @@ app.post("/login", (req, res) => {
 app.get("/logout", (req, res) => {
   const templateVars = {/*username: req.cookies["username"]*/ user: req.cookies["user"], userID: req.cookies["user_id"],};
   res.render("urls_show", templateVars); // Passes "username" to /logout route
-  res.redirect("/urls")
+  res.redirect("/urls");
 });
 
 // Remove cookie on logout
