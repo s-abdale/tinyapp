@@ -17,9 +17,9 @@ const urlDatabase = { // placeholder URLs
 };
 
 // Generate random string for user ID
-function generateRandomString() {
+const generateRandomString = function() {
   return Math.random().toString(36).slice(2, 8);
-}
+};
 
 const users = {
   "userRandomID": {
@@ -40,6 +40,16 @@ const getEmail = function(obj, str) {
     if (obj[id].email === str) {
       // console.log(true);
       return true; // BAD CASE - if email is in obj, return true
+    }
+  }
+};
+
+// Check if email & password are in database
+const checkUserPresence = function(obj, email, pwd) {
+  for (const id in obj) {
+    if ((obj[id].email === email) && (obj[id].password === pwd)) {
+      // console.log(true);
+      return true; // GOOD CASE - email & password pair exists, so user exists
     }
   }
 };
@@ -66,21 +76,16 @@ app.get("/hello", (req, res) => {
 
 // Show /URLs homepage
 app.get("/urls", (req, res) => {
-  const templateVars = { urls: urlDatabase, /*username: req.cookies["username"]*/ user: req.cookies["user"], userID: req.cookies["user_id"],};
+  const templateVars = { urls: urlDatabase, user: req.cookies["user"], userID: req.cookies["user_id"]};
   res.render("urls_index", templateVars);
 });
 
-// Show /login homepage
-app.get("/login", (req, res) => {
-  const templateVars = {urls: urlDatabase, user: req.cookies["user"], userID: req.cookies["user_id"]};
-  res.render("urls_login", templateVars)
-})
 
 
 /*---Actions on URLs---*/
 // Show Create new URLs page
 app.get("/urls/new", (req, res) => {
-  const templateVars = {/*username: req.cookies["username"]*/ user: req.cookies["user"], userID: req.cookies["user_id"],};
+  const templateVars = {user: req.cookies["user"], userID: req.cookies["user_id"]};
   res.render("urls_new", templateVars);
 });
 
@@ -94,7 +99,7 @@ app.post("/urls", (req, res) => {
 
 // Assign longURL to shortURL
 app.get("/urls/:shortURL", (req, res) => {
-  const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], /*username: req.cookies["username"]*/ user: req.cookies["user"], userID: req.cookies["user_id"],};
+  const templateVars = {shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], user: req.cookies["user"], userID: req.cookies["user_id"]};
   res.render("urls_show", templateVars);
 });
 
@@ -122,13 +127,12 @@ app.post("/urls/:shortURL", (req, res) => {
 /*---User accounts---*/
 // Show registration page
 app.get("/register", (req, res) => {
-  const templateVars = { urls: urlDatabase, /*username: req.cookies["username"]*/ user: req.cookies["user"], userID: req.cookies["user_id"],};
+  const templateVars = { urls: urlDatabase, user: req.cookies["user"], userID: req.cookies["user_id"]};
   res.render("urls_register", templateVars);
 });
 
 // Register and log in user through a form
 app.post("/register", (req, res) => {
-  // Variables needed for error evaluations:
   const randomUserID = generateRandomString();
   const userEmail = req.body.email; // just the email
 
@@ -136,48 +140,61 @@ app.post("/register", (req, res) => {
   // If email is already in use ...
   let evaluation = (getEmail(users, userEmail));
   if (evaluation === true) {
-    console.log(`Error: 400. Email is already in use`);
     res.status(400).send(`Error: 400. Email is already in use`);
   }
+
   // If email OR pwd are empty strings ...
   if ((!req.body.email) || (!req.body.password)) {
-    console.log(`Error: 400. Invalid email or password`);
     res.status(400).send(`Error: 400. Invalid email or password`);
   }
 
-  // Happy condition - no errors:
+  // If no errors ...
   // Push new user object to users object
   users[randomUserID] = {
     id: randomUserID,
     email: req.body.email,
     password: req.body.password
   };
-  // Variables for cookies:
-  const userObj = users[randomUserID]; // The entire new user object
 
   // Cookies:
+  const userObj = users[randomUserID]; // The entire new user object
   res.cookie("user", userObj); // Makes new user object a cookie
   res.redirect("/urls"); // Redirects to main /urls page
 });
 
 // Show login form in header bar
 app.get("/login", (req, res) => {
-  const templateVars = {/*username: req.cookies["username"]*/ user: req.cookies["user"], userID: req.cookies["user_id"],};
-  res.render("urls_show", templateVars); // Passes "username" to /login route
-  res.redirect("/urls");
+  const templateVars = {user: req.cookies["user"], userID: req.cookies["user_id"]};
+  res.render("urls_login", templateVars); // Loads up the /login page
+  res.redirect("/urls"); // takes user back to main /urls page
 });
 
 // Collect cookie on login
 app.post("/login", (req, res) => {
-  console.log(req.body); // Log the POST request body to the console
-  res.cookie("username", req.body.username); // value = name of form from _header.ejs
-  res.redirect("/urls"); // Redirects to main /urls page
+  const userEmail = req.body.email;
+  const userPassword = req.body.password;
+  const userPresence = checkUserPresence(users, userEmail, userPassword);
+
+  // Error evaluations:
+  // If email OR pwd are empty strings ...
+  if ((!userEmail) || (!userPassword)) {
+    res.status(403).send(`Error: 403. Invalid email or password`);
+  }
+
+  // If email is already in use ...
+  if (userPresence !== true) {
+    res.status(403).send(`Error: 403. Incorrect input`);
+  }
+
+  // Happy state:
+  res.cookie("user", req.body); // Makes the current user object a cookie
+  res.redirect("/urls");
 });
 
 // Logout via header button
 app.get("/logout", (req, res) => {
-  const templateVars = {/*username: req.cookies["username"]*/ user: req.cookies["user"], userID: req.cookies["user_id"],};
-  res.render("urls_show", templateVars); // Passes "username" to /logout route
+  const templateVars = {user: req.cookies["user"], userID: req.cookies["user_id"]};
+  res.render("urls_show", templateVars); // Passes "user" to /logout route
   res.redirect("/urls");
 });
 
