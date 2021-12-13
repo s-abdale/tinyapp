@@ -70,6 +70,11 @@ app.get("/urls", (req, res) => {
   res.render("urls_index", templateVars);
 });
 
+// Show /login homepage
+app.get("/login", (req, res) => {
+  const templateVars = {urls: urlDatabase, user: req.cookies["user"], userID: req.cookies["user_id"]};
+  res.render("urls_login", templateVars)
+})
 
 
 /*---Actions on URLs---*/
