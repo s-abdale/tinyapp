@@ -82,48 +82,6 @@ app.get("/urls", (req, res) => {
 
 
 
-/*---Actions on URLs---*/
-// Show Create new URLs page
-app.get("/urls/new", (req, res) => {
-  const templateVars = {user: req.cookies["user"], userID: req.cookies["user_id"]};
-  res.render("urls_new", templateVars);
-});
-
-// Create new URL & show new URL page
-app.post("/urls", (req, res) => {
-  console.log(req.body); // Log the POST request body to the console
-  const randomStr = generateRandomString();
-  urlDatabase[randomStr] = req.body.longURL; // Pushes new tiny URL to urlDatabase
-  res.redirect(`/urls/${randomStr}`); // Redirects to main /urls page
-});
-
-// Assign longURL to shortURL
-app.get("/urls/:shortURL", (req, res) => {
-  const templateVars = {shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], user: req.cookies["user"], userID: req.cookies["user_id"]};
-  res.render("urls_show", templateVars);
-});
-
-// Delete URL from /URLs homepage
-app.post("/urls/:shortURL/delete", (req, res) => {
-  console.log(req.body); // Log the POST request body to the console
-  delete urlDatabase[req.params.shortURL], req.params.shortURL; // Deletes URL entry
-  res.redirect("/urls"); // Redirects to main urls_index page
-});
-
-// Hyperlinks short URL to long URL ✅ only from new URL pg
-app.get("/u/:shortURL", (req, res) => {
-  const longURL = urlDatabase[req.params.shortURL];
-  res.redirect(longURL);
-});
-
-// Edit URL from /URLs homepage
-app.post("/urls/:shortURL", (req, res) => {
-  urlDatabase[req.params.shortURL] = req.body.newLongURL;
-  res.redirect(`/urls/${req.params.shortURL}`);
-});
-
-
-
 /*---User accounts---*/
 // Show registration page
 app.get("/register", (req, res) => {
@@ -203,4 +161,51 @@ app.post("/logout", (req, res) => {
   console.log(req.body); // Log the POST request body to the console
   res.clearCookie("user"); // Removes the cookie + username
   res.redirect("/urls"); // Redirects to main /urls page
+});
+
+
+
+/*---Actions on URLs---*/
+// Show Create new URLs page
+app.get("/urls/new", (req, res) => {
+  const templateVars = {user: req.cookies["user"], userID: req.cookies["user_id"]};
+  // If user is logged in, give access to create new URLs
+  if (req.cookies.user) {
+    res.render("urls_new", templateVars)
+  } else {
+    res.redirect("/urls")
+  }
+});
+
+// Create new URL & show new URL page
+app.post("/urls", (req, res) => {
+  console.log(req.body); // Log the POST request body to the console
+  const randomStr = generateRandomString();
+  urlDatabase[randomStr] = req.body.longURL; // Pushes new tiny URL to urlDatabase
+  res.redirect(`/urls/${randomStr}`); // Redirects to main /urls page
+});
+
+// Assign longURL to shortURL
+app.get("/urls/:shortURL", (req, res) => {
+  const templateVars = {shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], user: req.cookies["user"], userID: req.cookies["user_id"]};
+  res.render("urls_show", templateVars);
+});
+
+// Delete URL from /URLs homepage
+app.post("/urls/:shortURL/delete", (req, res) => {
+  console.log(req.body); // Log the POST request body to the console
+  delete urlDatabase[req.params.shortURL], req.params.shortURL; // Deletes URL entry
+  res.redirect("/urls"); // Redirects to main urls_index page
+});
+
+// Hyperlinks short URL to long URL ✅ only from new URL pg
+app.get("/u/:shortURL", (req, res) => {
+  const longURL = urlDatabase[req.params.shortURL];
+  res.redirect(longURL);
+});
+
+// Edit URL from /URLs homepage
+app.post("/urls/:shortURL", (req, res) => {
+  urlDatabase[req.params.shortURL] = req.body.newLongURL;
+  res.redirect(`/urls/${req.params.shortURL}`);
 });
