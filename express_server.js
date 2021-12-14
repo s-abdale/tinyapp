@@ -153,7 +153,6 @@ app.post("/login", (req, res) => {
 app.get("/logout", (req, res) => {
   const templateVars = {user: req.session.user, userID: req.session.user_id};
   res.render("urls_show", templateVars); // Passes "user" to /logout route
-  // res.redirect("/urls");
   res.redirect("/landing");
 });
 
