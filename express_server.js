@@ -69,18 +69,18 @@ const getUserID = function(userObj, email) {
   return user_id;
 }
 
-const urlsForUser = function(id, databaseObj) {
+const urlsForUser = function(userID, databaseObj) {
   let newUserObj = {};
 
   // identify which DATABASE object contains the same ID as current user
   for (const shortURL in databaseObj) {
     let databaseUserID = databaseObj[shortURL].userID;
     
-    if (id === databaseUserID) {
+    if (userID === databaseUserID) {
       newUserObj[shortURL] = databaseObj[shortURL];
     }
   }
-  return newUserObj;
+  return newUserObj; // returns URLs made by current user
 };
 
 
@@ -182,7 +182,7 @@ app.post("/login", (req, res) => {
     res.status(403).send(`Error: 403. Incorrect input`);
   }
 
-  // Happy state: 🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨
+  // Happy state:
   res.cookie("user", req.body); // Makes the current user object a cookie
   const foundUserID = getUserID(users, req.body.email);
   res.cookie("user_id", foundUserID)
@@ -220,13 +220,13 @@ app.get("/urls/new", (req, res) => {
   }
 });
 
-// Create new URL & show new URL page
+// Create new URL & show new URL page 🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨
 app.post("/urls", (req, res) => {
   const randomStr = generateRandomString();
-
+  const userID = req.cookies["user_id"];
+  urlsForUser(urlDatabase, userID); // only shows URLs associated with user
   urlDatabase[randomStr] = {longURL: req.body.longURL, userID: req.cookies["user_id"]}; // Pushes tinyURL object with longURL & userID to urlDatabase
-  
-  res.redirect(`/urls/${randomStr}`); // Redirects to main /urls page
+  res.redirect(`/urls/${randomStr}`); // Redirects to new url's page
 });
 
 // Assign longURL to shortURL
@@ -243,6 +243,9 @@ app.get("/u/:shortURL", (req, res) => {
 
 // Edit URL from /URLs homepage
 app.post("/urls/:shortURL", (req, res) => {
+  const userID = req.cookies["user_id"];
+  urlsForUser(urlDatabase, userID); // only shows URLs associated with user
+
   urlDatabase[req.params.shortURL].longURL = req.body.newLongURL;
 
   res.redirect(`/urls/${req.params.shortURL}`);
@@ -250,7 +253,8 @@ app.post("/urls/:shortURL", (req, res) => {
 
 // Delete URL from /URLs homepage
 app.post("/urls/:shortURL/delete", (req, res) => {
-  console.log(req.body); // Log the POST request body to the console
+  const userID = req.cookies["user_id"];
+  urlsForUser(urlDatabase, userID); // only shows URLs associated with user
   delete urlDatabase[req.params.shortURL], req.params.shortURL; // Deletes URL entry
   res.redirect("/urls"); // Redirects to main urls_index page
 });
