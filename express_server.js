@@ -11,13 +11,6 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 
 /*               DATA                     */
-// // old url database
-// const urlDatabase = { // placeholder URLs
-//   "b2xVn2": "http://www.lighthouselabs.ca",
-//   "9sm5xK": "http://www.google.com"
-// };
-
-// new url database
 const urlDatabase = {
   b6UTxQ: {
       longURL: "https://www.tsn.ca",
@@ -65,6 +58,30 @@ const checkUserPresence = function(obj, email, pwd) {
   }
 };
 
+const getUserID = function(userObj, email) {
+  let user_id;
+  for (let user in userObj) {
+    let emails = userObj[user].email;
+    if (emails === email) {
+      user_id = userObj[user].id
+    }
+  }
+  return user_id;
+}
+
+const urlsForUser = function(id, databaseObj) {
+  let newUserObj = {};
+
+  // identify which DATABASE object contains the same ID as current user
+  for (const shortURL in databaseObj) {
+    let databaseUserID = databaseObj[shortURL].userID;
+    
+    if (id === databaseUserID) {
+      newUserObj[shortURL] = databaseObj[shortURL];
+    }
+  }
+  return newUserObj;
+};
 
 
 /*               ROUTES                   */
@@ -131,9 +148,12 @@ app.post("/register", (req, res) => {
     password: req.body.password
   };
 
+
   // Cookies:
   const userObj = users[randomUserID]; // The entire new user object
   res.cookie("user", userObj); // Makes new user object a cookie
+  const foundUserID = getUserID(users, req.body.email);
+  res.cookie("user_id", foundUserID)
   res.redirect("/urls"); // Redirects to main /urls page
 });
 
@@ -149,6 +169,7 @@ app.post("/login", (req, res) => {
   const userEmail = req.body.email;
   const userPassword = req.body.password;
   const userPresence = checkUserPresence(users, userEmail, userPassword);
+  // const getUserID = getID(users, userEmail, userPassword);
 
   // Error evaluations:
   // If email OR pwd are empty strings ...
@@ -161,8 +182,10 @@ app.post("/login", (req, res) => {
     res.status(403).send(`Error: 403. Incorrect input`);
   }
 
-  // Happy state:
+  // Happy state: 🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨
   res.cookie("user", req.body); // Makes the current user object a cookie
+  const foundUserID = getUserID(users, req.body.email);
+  res.cookie("user_id", foundUserID)
   res.redirect("/urls");
 });
 
@@ -176,9 +199,9 @@ app.get("/logout", (req, res) => {
 
 // Remove cookie on logout
 app.post("/logout", (req, res) => {
-  // console.log(req.body); // Log the POST request body to the console
   res.clearCookie("user"); // Removes the cookie + username
-  // res.redirect("/urls"); // Redirects to main /urls page
+  res.clearCookie("user_id"); // Removes the cookie + username
+  res.clearCookie("username"); // Removes the cookie + username
   res.redirect("/landing");
 });
 
@@ -201,7 +224,7 @@ app.get("/urls/new", (req, res) => {
 app.post("/urls", (req, res) => {
   const randomStr = generateRandomString();
 
-  urlDatabase[randomStr] = {longURL: req.body.longURL, userID: req.cookies["user_id"].id}; // Pushes tinyURL object with longURL & userID to urlDatabase
+  urlDatabase[randomStr] = {longURL: req.body.longURL, userID: req.cookies["user_id"]}; // Pushes tinyURL object with longURL & userID to urlDatabase
   
   res.redirect(`/urls/${randomStr}`); // Redirects to main /urls page
 });
