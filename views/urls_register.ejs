@@ -7,14 +7,37 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 
-    <title>Register - TinyApp Example</title>
+    <title>Register - tinyURL</title>
+
+    <style>
+      main {
+        margin-top: 20vh;
+        display: flex;
+        width: fit-content;
+        flex-direction: column;
+      }
+      .register-form {
+        background-color: ghostwhite;
+        color: midnightblue;
+        padding: 5vh;
+        border: 2px solid darkblue;
+        border-radius: 12px;
+        box-shadow: 5px 5px lightsteelblue;
+      }
+      h3 {
+        color: darkblue; 
+        font-family: Arial Black;
+        margin-top: 2vh;
+        margin-bottom: 2vh;
+      }
+    </style>
   </head>
 
   <body>
     <%- include('partials/_header') %>
     <main style="margin: 1em;">
-      <h3>Register tinyURL Account</h3>
-      <form name="loginForm" action="/register" method="POST">
+      <h3>Register to tinyURL</h3>
+      <form class="register-form" name="loginForm" action="/register" method="POST">
         <label for="email">E-mail:</label><br>
         <input type="email" name="email" placeholder="example@site.com"><br>
         <label for="lname">Password:</label><br>

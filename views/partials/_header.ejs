@@ -1,9 +1,9 @@
 <header>
-  <nav class="navbar navbar-expand-md navbar-dark bg-success">
+  <nav class="navbar navbar-expand-md navbar-dark" style="background-color: darkblue; color: white">
     <% if (user) { %>
-      <a class="navbar-brand" href="/urls">TinyApp</a>
+      <a class="navbar-brand" href="/urls" style="font-family: Arial Black;">tinyURL</a>
     <% } else{ %>
-      <a class="navbar-brand" href="/">TinyApp</a>
+      <a class="navbar-brand" href="/" style="font-family: Arial Black;">tinyURL</a>
     <% } %>
 
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
@@ -18,8 +18,8 @@
     <% if (user) { %>
       <!-- log out -->
       <form method="POST" action="/logout">
-        <label>Logged in as: <%= user["email"] %>!</label>
-        <button type="logout" class="btn btn-primary">Log Out</button>
+        <label>Logged in as <em><%= user["email"] %></em>&nbsp</label>
+        <button type="logout" class="btn btn-outline-primary">Log Out</button>
       </form>
     <% } else{ %>
       <!-- log in -->

@@ -7,18 +7,66 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 
-    <title>Landing Page - TinyApp Example</title>
+    <title>Landing Page - tinyURL</title>
+    <style type="text/css">
+      body {
+        margin-top: 20vh;
+        display: flex;
+        justify-content: center;
+      }
+      .entry-card {
+        background-color: ghostwhite;
+        color: midnightblue;
+        padding: 5vh;
+        border: 2px solid darkblue;
+        border-radius: 12px;
+        box-shadow: 5px 5px lightsteelblue;
+      }
+      h3 {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 10vh;
+        color: darkblue;
+        font-size: 45px;
+        font-family: Arial Black, Helvetica, sans-serif
+      }
+      h4 {
+        margin-bottom: 5vh;
+      }
+      .buttons-row {
+        display: flex;
+        justify-content: space-around;
+      }
+      .buttons {
+        background-color: white;
+        border: 2px solid darkblue;
+        color: darkblue;
+        border-radius: 8px;
+        margin-top: 2vh;
+        padding: 2vh;
+        font-size: 16px;
+        text-align: center;
+      }
+      .buttons:hover {
+        border: 2px solid blue;
+        color: blue;
+        box-shadow: 3px 3px lightsteelblue;
+      }
+    </style>
   </head>
 
   <body>
-    <%- include('partials/_header') %>
     <main>
-      <h3>Welcome to tinyURL!</h3>
-      <h4>To enter the site, please log in or sign up ...</h4>
-      <button type="button" class="btn btn-outline-primary"><a href="/login">Log In</a></button>
-      <button type="button" class="btn btn-outline-success"><a href="/register">Sign Up</a></button>
+      <h3>Welcome to&nbsp<i>tinyURL</i></h3>
+      <div class="entry-card">
+        <h4>To enter this site, please log in or sign up</h4>
+        <div class="buttons-row">
+          <button type="button" class="buttons" onclick="location.href='/login'">Log In</button>
+          <button type="button" class="buttons" onclick="location.href='/register'">Sign Up</button>
+        </div>
+      </div>
     </main>
-      <!-- Bootstrap JS -->
+    <!-- Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
