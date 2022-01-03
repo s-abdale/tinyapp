@@ -5,12 +5,11 @@ tinyURL is a full stack web application built with Node and Express that allows 
 ## Final Product
 ##### Demo video
 Watch a demonstration of tinyURL.
-!["Gif of tinyURL web app"]()
+!["Gif of tinyURL web app"](https://github.com/s-abdale/tinyapp/blob/master/docs/demo.gif)
 
 ##### /Landing page
 Log in or register to tinyURL here.
 !["Screenshot of landing page"](https://github.com/s-abdale/tinyapp/blob/master/docs/landing-page.png)
-!["Screenshot of login page"](https://github.com/s-abdale/tinyapp/blob/master/docs/login-page.png)
 
 ##### /URLs page
 Shows a list of the current users' short URLs.
