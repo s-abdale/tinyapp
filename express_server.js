@@ -210,13 +210,20 @@ app.post("/urls", (req, res) => {
 
 // Assign longURL to shortURL
 app.get("/urls/:shortURL", (req, res) => {
-  const templateVars = {shortURL: req.params.shortURL, long_URL: urlDatabase[req.params.shortURL].longURL, user: req.session.user, userID: req.session.user_id};
+
   const longURL = urlDatabase[req.params.shortURL];
 
-  if (longURL.userID === req.session.user_id) {
-    res.render("urls_show", templateVars);
+  if (longURL) {
+    const templateVars = {shortURL: req.params.shortURL, long_URL: urlDatabase[req.params.shortURL].longURL, user: req.session.user, userID: req.session.user_id};
+    
+    if (longURL.userID === req.session.user_id) {
+      res.render("urls_show", templateVars);
+    } else {
+      res.status(400).send(`Error: You do not own this tinyURL`);
+    }
+  } else {
+    res.status(400).send(`Error: This tinyURL does not exist`);
   }
-  res.status(400).send(`Error: You do not own this tinyURL`);
 });
 
 // Hyperlinks short URL to long URL
