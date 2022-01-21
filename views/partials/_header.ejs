@@ -23,10 +23,12 @@
       </form>
     <% } else{ %>
       <!-- log in -->
-      <form method="POST" action="/login">
+      <form method="GET" action="/login">
         <button type="submit" class="btn btn-light" onclick="location.href='/login'" style="margin-right: 10px">Log In</button>
       </form>
-      <button type="submit" class="btn btn-light" onclick="location.href='/register'">Register</button>
+      <form method="GET" action="/register">
+        <button type="submit" class="btn btn-light" onclick="location.href='/register'">Register</button>
+      </form>
     <% } %>
   </nav>
 </header>
