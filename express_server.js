@@ -212,11 +212,8 @@ app.get("/urls/:shortURL", (req, res) => {
 // Hyperlinks short URL to long URL
 app.get("/u/:shortURL", (req, res) => {
   const longURL = urlDatabase[req.params.shortURL];
-  
-  if (longURL.userID === req.session.user_id) {
-    res.redirect(longURL.longURL);
-  }
-  res.redirect("/urls");
+
+  res.redirect(longURL.longURL);
 });
 
 // Edit URL from /URLs homepage
