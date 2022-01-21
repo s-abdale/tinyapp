@@ -206,7 +206,7 @@ app.get("/urls/:shortURL", (req, res) => {
   if (longURL.userID === req.session.user_id) {
     res.render("urls_show", templateVars);
   }
-  res.redirect("/urls");
+  res.status(400).send(`Error: You do not own this tinyURL`);
 });
 
 // Hyperlinks short URL to long URL
