@@ -202,6 +202,10 @@ app.post("/urls", (req, res) => {
 app.get("/urls/:shortURL", (req, res) => {
   const templateVars = {shortURL: req.params.shortURL, long_URL: urlDatabase[req.params.shortURL].longURL, user: req.session.user, userID: req.session.user_id};
   const longURL = urlDatabase[req.params.shortURL];
+  console.log('🌶🌶🌶🌶🌶LONGURL🌶🌶🌶🌶');
+  console.log(longURL.longURL);
+  console.log('DONE🌶🌶🌶🌶🌶LONGURL🌶🌶🌶🌶');
+
 
   if (longURL.userID === req.session.user_id) {
     res.render("urls_show", templateVars);
@@ -224,6 +228,12 @@ app.post("/urls/:shortURL", (req, res) => {
   const userID = req.session.user_id;
   urlsForUser(urlDatabase, userID); // only shows URLs associated with user in /urls list
   urlDatabase[req.params.shortURL].longURL = req.body.newLongURL;
+
+  // urlDatabase[req.params.shortURL] = {
+  //   longURL: req.body.newLongURL,
+  //   // userID: req.session.user_id
+  // }
+
 
   res.redirect(`/urls/${req.params.shortURL}`);
 });
