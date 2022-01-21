@@ -64,6 +64,16 @@ app.listen(PORT, () => {
 app.get("/", (req, res) => {
   const templateVars = { urls: urlDatabase, user: req.session.user, userID: req.session.user_id};
 
+  // If user is already logged in send to /urls, else load up login page
+  if (!req.session.user) {
+    res.render("urls_login", templateVars);
+  }
+  res.redirect("/urls");
+});
+
+app.get("/landing", (req, res) => {
+  const templateVars = { urls: urlDatabase, user: req.session.user, userID: req.session.user_id};
+
   // If user is already logged in send to /urls, else load up landing page
   if (!req.session.user) {
     res.render("urls_landing", templateVars);
