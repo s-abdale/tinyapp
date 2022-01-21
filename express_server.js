@@ -185,7 +185,7 @@ app.get("/urls/new", (req, res) => {
   if (req.session.user) {
     res.render("urls_new", templateVars);
   }
-  res.redirect("/");
+  res.redirect("/login");
 });
 
 // Create new URL & show new URL page
