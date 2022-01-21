@@ -224,24 +224,14 @@ app.post("/urls/:shortURL", (req, res) => {
   const userID = req.session.user_id;
   urlsForUser(urlDatabase, userID); // only shows URLs associated with user in /urls list
   if (req.body.newLongURL.length === 0) {
-    // res.redirect(`/urls/${req.params.shortURL}`)
-    console.log('🍊🍊🍊🍊🍊NOT CHANGING URL🍊🍊🍊🍊')
+    res.redirect(`/urls/${req.params.shortURL}`)
+    // Does not reassign longURL, redirects back to the old edit page
+  } else {
+    urlDatabase[req.params.shortURL].longURL = req.body.newLongURL;
+    // Reassigns longURL
+    res.redirect(`/urls/${req.params.shortURL}`);
+    // Redirects to page with updated longURL
   }
-  urlDatabase[req.params.shortURL].longURL = req.body.newLongURL;
-
-  // urlDatabase[req.params.shortURL] = {
-  //   longURL: req.body.newLongURL,
-  //   // userID: req.session.user_id
-  // }
-  console.log('🍇🍇🍇🍇🍇INSIDE EDIT URL - FILTER HERE🍇🍇🍇🍇🍇');
-  console.log(req.body.newLongURL);
-  console.log(`🍇🍇🍇🍇NEW LONGURL🍇🍇🍇🍇`)
-  console.log('LENGTH:');
-  console.log(req.body.newLongURL.length)
-  console.log(`if no url in form, don't redirect`);
-
-
-  res.redirect(`/urls/${req.params.shortURL}`);
 });
 
 // Delete URL from /URLs homepage
