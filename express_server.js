@@ -202,10 +202,13 @@ app.get("/urls/new", (req, res) => {
 app.post("/urls", (req, res) => {
   const randomStr = generateRandomString();
   const userID = req.session.user_id;
-  urlsForUser(urlDatabase, userID); // only shows URLs associated with user
-  urlDatabase[randomStr] = {longURL: req.body.longURL, userID: req.session.user_id}; // Pushes tinyURL object with longURL & userID to urlDatabase
-
-  res.redirect(`/urls/${randomStr}`); // Redirects to new url's page
+  if (req.session.user) {
+    urlsForUser(urlDatabase, userID); // only shows URLs associated with user
+    urlDatabase[randomStr] = {longURL: req.body.longURL, userID: req.session.user_id}; // Pushes tinyURL object with longURL & userID to urlDatabase
+  
+    res.redirect(`/urls/${randomStr}`); // Redirects to new url's page
+  }
+  res.status(400).send(`Error: 400. You are not logged in. Please log in to create and view tinyURL`);
 });
 
 // Assign longURL to shortURL
@@ -215,7 +218,7 @@ app.get("/urls/:shortURL", (req, res) => {
 
   if (longURL) {
     const templateVars = {shortURL: req.params.shortURL, long_URL: urlDatabase[req.params.shortURL].longURL, user: req.session.user, userID: req.session.user_id};
-    
+
     if (longURL.userID === req.session.user_id) {
       res.render("urls_show", templateVars);
     } else {
