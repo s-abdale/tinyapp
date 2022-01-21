@@ -202,10 +202,6 @@ app.post("/urls", (req, res) => {
 app.get("/urls/:shortURL", (req, res) => {
   const templateVars = {shortURL: req.params.shortURL, long_URL: urlDatabase[req.params.shortURL].longURL, user: req.session.user, userID: req.session.user_id};
   const longURL = urlDatabase[req.params.shortURL];
-  console.log('🌶🌶🌶🌶🌶LONGURL🌶🌶🌶🌶');
-  console.log(longURL.longURL);
-  console.log('DONE🌶🌶🌶🌶🌶LONGURL🌶🌶🌶🌶');
-
 
   if (longURL.userID === req.session.user_id) {
     res.render("urls_show", templateVars);
@@ -227,12 +223,22 @@ app.get("/u/:shortURL", (req, res) => {
 app.post("/urls/:shortURL", (req, res) => {
   const userID = req.session.user_id;
   urlsForUser(urlDatabase, userID); // only shows URLs associated with user in /urls list
+  if (req.body.newLongURL.length === 0) {
+    // res.redirect(`/urls/${req.params.shortURL}`)
+    console.log('🍊🍊🍊🍊🍊NOT CHANGING URL🍊🍊🍊🍊')
+  }
   urlDatabase[req.params.shortURL].longURL = req.body.newLongURL;
 
   // urlDatabase[req.params.shortURL] = {
   //   longURL: req.body.newLongURL,
   //   // userID: req.session.user_id
   // }
+  console.log('🍇🍇🍇🍇🍇INSIDE EDIT URL - FILTER HERE🍇🍇🍇🍇🍇');
+  console.log(req.body.newLongURL);
+  console.log(`🍇🍇🍇🍇NEW LONGURL🍇🍇🍇🍇`)
+  console.log('LENGTH:');
+  console.log(req.body.newLongURL.length)
+  console.log(`if no url in form, don't redirect`);
 
 
   res.redirect(`/urls/${req.params.shortURL}`);
