@@ -223,7 +223,11 @@ app.get("/urls/:shortURL", (req, res) => {
 app.get("/u/:shortURL", (req, res) => {
   const longURL = urlDatabase[req.params.shortURL];
 
-  res.redirect(longURL.longURL);
+  if (longURL) {
+    res.redirect(longURL.longURL);
+  } else {
+    res.status(400).send(`Error: This tinyURL does not exist`);
+  }
 });
 
 // Edit URL from /URLs homepage
