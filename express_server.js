@@ -208,7 +208,7 @@ app.post("/urls", (req, res) => {
   
     res.redirect(`/urls/${randomStr}`); // Redirects to new url's page
   }
-  res.status(400).send(`Error: 400. You are not logged in. Please log in to create and view tinyURL`);
+  res.status(400).send(`Error: 400. You are not logged in. Please log in to use tinyURL`);
 });
 
 // Assign longURL to shortURL
@@ -262,9 +262,13 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   urlsForUser(urlDatabase, userID); // only shows URLs associated with user in /urls list
 
   // If URL owner is logged in it deletes URL entry & redirects to main urls_index page, else redirects to /urls page
-  if (longURL.userID === req.session.user_id) {
-    delete urlDatabase[req.params.shortURL], req.params.shortURL;
+  
+  if (req.session.user) {
+    if (longURL.userID === req.session.user_id) {
+      delete urlDatabase[req.params.shortURL], req.params.shortURL;
+      res.redirect("/urls");
+    }
     res.redirect("/urls");
   }
-  res.redirect("/urls");
+  res.status(400).send(`Error: 400. You are not logged in. Please log in to use tinyURL`);
 });
